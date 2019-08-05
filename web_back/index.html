@@ -141,15 +141,15 @@
                     keyboard: true
                 });
                 // 2.如果点击的是确定就返回首页
-                $('.btn-primary').on('click',function(){
+                $('.btn-primary').on('click', function () {
                     // 发送ajax请求
                     $.ajax({
-                        url:'http://localhost:8080/admin/user/logout',
-                        type:'post',
-                        success:function(backData){
+                        url: 'http://localhost:8080/admin/user/logout',
+                        type: 'post',
+                        success: function (backData) {
                             // console.log(backData);
-                            if(backData.code==200){
-                                window.location.href='login.html'
+                            if (backData.code == 200) {
+                                window.location.href = 'login.html'
                             }
                         }
                     });
@@ -157,7 +157,17 @@
             });
 
 
-
+            // 当一进去首页就获取头像人名
+            $.ajax({
+                url: 'http://localhost:8080/admin/user/info',
+                success: function (backData) {
+                    if (backData.code == 200) {
+                        $('.user_info>img').attr('src',backData.data.userPic);
+                        $('.user_info>span').html('欢迎&nbsp;&nbsp;'+backData.data.nickname);
+                        $('.user_center_link>img').attr('src',backData.data.userPic);
+                    }
+                }
+            });
         });
     </script>
 </body>
