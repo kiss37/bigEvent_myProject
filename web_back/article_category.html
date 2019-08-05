@@ -116,7 +116,7 @@
         });
 
         $('#model_shutoff').click(function () {
-            alert('shutoff');
+            // alert('shutoff');
             $('#addModal').modal('hide');
         });
 
@@ -203,6 +203,7 @@
 
             // 当点击编辑按钮时候修改模态框文字和按钮颜色
             $('tbody').on('click', 'a.btn-info', function () {
+
                 $('#addModal .modal-title').html('修改分类');
                 $('#model_add').text('修改').addClass('btn-success')
 
@@ -223,6 +224,8 @@
 
             // 当点击新增按钮时修改模态框文字和按钮颜色
             $('#xinZengFenLei').on('click', function () {
+                $('#recipient-name').val('');
+                $('#recipient-slug').val('');
                 $('#addModal .modal-title').html('新增分类');
                 $('#model_add').text('新增').removeClass('btn-success')
             })
