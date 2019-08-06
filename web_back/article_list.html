@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="js/jquery-1.12.4.min.js"></script>
     <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./js/jquery.twbsPagination.js"></script>
 </head>
 
 <body>
@@ -31,9 +32,9 @@
                             <option>爱旅行</option>
                         </select>
                         <select id="selStatus" name="" class="form-control input-sm">
-                            <option>所有状态</option>
-                            <option value="drafted">草稿</option>
-                            <option value="published">已发布</option>
+                            <option value="">所有状态</option>
+                            <option value="草稿">草稿</option>
+                            <option value="已发布">已发布</option>
                         </select>
                         <button id="btnSearch" class="btn btn-default btn-sm">筛选</button>
                     </form>
@@ -270,6 +271,13 @@
     </div>
     <!-- 引入模板文件 -->
     <script src="./js/template-web.js"></script>
+
+    <script id="article_cate" type="text/html">
+        <option value="">所有分类</option>
+        {{each data v}}
+            <option value='{{v.id}}'>{{v.name}}</option>
+        {{/each}}
+    </script>
     <!-- 制作模板 -->
     <script id="article_list" type="text/html">
         {{each data.data v}}
@@ -277,7 +285,7 @@
 
                 <td>{{v.title}}</td>
                 <td>{{v.author}}</td>
-                <td>{{v.categoryName}}</td>
+                <td>{{v.category}}</td>
                 <td class="text-center">{{v.date}}</td>
                 <td class="text-center">{{v.state}}</td>
                 <td class="text-center">
@@ -287,7 +295,7 @@
             </tr>
         {{/each}}
     </script>
-    <script>
+    <!-- <script>
         // 设置左侧菜单
         $('#release_btn').click(function () {
             window.parent.setMenu(1, 1);
@@ -325,9 +333,107 @@
                     $('tbody').html(resHtml);
                 }
             });
+
+
+
+
+        });
+    </script> -->
+
+    <script>
+        $(function () {
+            // 一进入页面获取所有的样式分类添加到
+            $.ajax({
+                url: 'http://localhost:8080/admin/category/list',
+                success: function (backData) {
+                    // 调用模板核心方法
+                    var resHtml = template('article_cate', backData);
+                    $('#selCategory').html(resHtml);
+                }
+            });
+
+
+            var artiCate;
+            var artiState;
+            var flag=true;
+            $('#btnSearch').on('click', function (e) {
+                e.preventDefault();
+
+                // 获取修改文章的下拉菜单选中的val值
+                artiCate = $('#selCategory').val();
+                artiState = $('#selStatus').val();
+
+                flag=false;
+                // 调用渲染
+                getData(1, artiCate, artiState);
+            });
+
+
+
+            // 设置一个变量保存页码
+            var mytotalPages = 10;
+            //分页
+            var $pagination = $('.pagination');
+            var defaultOpts = {
+                // 总页数
+                totalPages: mytotalPages,
+                // 总显示页码数
+                visiblePages: 5,
+                // 写中文
+                first: '首页',
+                prev: '上一页',
+                next: '下一页',
+                last: '尾页',
+                // 触发事件
+                onPageClick: function (event, page) {
+                    console.log('呵呵');
+                    // 一个事件一个是当前点击的页码数
+                    getData(page, artiCate, artiState);
+                }
+            }
+            $pagination.twbsPagination(defaultOpts);
+            // getData(1);
+
+            function getData(myPage, artiCate, artiState) {
+                // 页面一进入获取所有文章渲染页面
+                $.ajax({
+                    url: 'http://localhost:8080/admin/article/query',
+                    data: {
+                        type: artiCate,//文章类型
+                        state: artiState, //文章状态
+                        page: myPage,//当前页
+                        perpage: 5,//每页显示条数
+                    },
+                    success: function (backData) {
+                        console.log(backData);
+
+                        //调用核心方法 渲染页面
+                        var resHtml = template('article_list', backData);
+                        $('tbody').html(resHtml);
+
+                        var totalPages = backData.data.totalPage;//获取当前总页数
+                        if (totalPages!=mytotalPages||flag==false) {
+                            
+                            mytotalPages=totalPages
+                            var currentPage = $pagination.twbsPagination('getCurrentPage');//获取当前页
+                            $pagination.twbsPagination('destroy');
+
+                            // 重新渲染
+                            $pagination.twbsPagination($.extend({}, defaultOpts, {
+                                startPage: 1,
+                                totalPages: totalPages
+                            }));
+                            // 过一遍又把开关复原
+                            flag=true;
+                        }
+
+                    }
+                });
+            };
+
+
         });
     </script>
-
 </body>
 
 </html>
