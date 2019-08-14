@@ -18,7 +18,7 @@
     <div class="container-fluid">
         <div class="row spannel_list">
             <div class="col-sm-3 col-xs-6">
-                <div class="spannel">
+                <div class="spannel scolor">
                     <em>10015</em><span>篇</span>
                     <b>总文章数</b>
                 </div>
@@ -426,7 +426,7 @@
 
 
                     var oColumnopt = {
-                            
+
                         title: {
                             text: '文章访问量',
                             left: 'center',
@@ -641,6 +641,18 @@
         // };
         // oColumn.setOption(oColumnopt);
 
+
+        // 一进入页面就发送ajax
+        $.ajax({
+            type: 'get',
+            url: 'http://localhost:8080/admin/data/info',
+            success: function (backData) {
+                $('.scolor>em').text(backData.totalArticle);
+                $('.scolor01>em').text(backData.dayArticle);
+                $('.scolor02>em').text(backData.totalComment);
+                $('.scolor03>em').text(backData.dayComment);
+            }
+        });
     </script>
 
 
