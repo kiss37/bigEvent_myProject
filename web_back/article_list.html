@@ -290,7 +290,7 @@
                 <td class="text-center">{{v.state}}</td>
                 <td class="text-center">
                     <a href="article_edit.html?id={{v.id}}" class="btn btn-default btn-xs">编辑</a>
-                    <a href="javascript:deleteTr( 1000 );" class="btn btn-danger btn-xs">删除</a>
+                    <a href="#" data-id="{{v.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
                 </td>
             </tr>
         {{/each}}
@@ -355,7 +355,7 @@
 
             var artiCate;
             var artiState;
-            var flag=true;
+            var flag = true;
             $('#btnSearch').on('click', function (e) {
                 e.preventDefault();
 
@@ -363,7 +363,7 @@
                 artiCate = $('#selCategory').val();
                 artiState = $('#selStatus').val();
 
-                flag=false;
+                flag = false;
                 // 调用渲染
                 getData(1, artiCate, artiState);
             });
@@ -412,9 +412,9 @@
                         $('tbody').html(resHtml);
 
                         var totalPages = backData.data.totalPage;//获取当前总页数
-                        if (totalPages!=mytotalPages||flag==false) {
-                            
-                            mytotalPages=totalPages
+                        if (totalPages != mytotalPages || flag == false) {
+
+                            mytotalPages = totalPages
                             var currentPage = $pagination.twbsPagination('getCurrentPage');//获取当前页
                             $pagination.twbsPagination('destroy');
 
@@ -424,14 +424,28 @@
                                 totalPages: totalPages
                             }));
                             // 过一遍又把开关复原
-                            flag=true;
+                            flag = true;
                         }
 
                     }
                 });
             };
 
-
+            // 给删除按钮设置点击事件(事件委托)
+            $("tbody").on("click", "a.btn-delete", function () {
+                if (confirm("是否要删除?")) {
+                    // 获取当前id
+                    let id=$(this).attr("data-id");
+                    // 获取发送ajax请求
+                    $.ajax({
+                        type:'get',
+                        url:'http://localhost:8080/admin/article/delete',
+                        success : function (res) {
+                            
+                        }
+                    });
+                }
+            });
         });
     </script>
 </body>
