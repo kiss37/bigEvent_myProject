@@ -239,6 +239,19 @@
     </script>
     <script>
         $(function () {
+            // 点击搜索按钮
+            $('.search_btn').on('click', function () {
+                // 需求 检索用户输入的关键字搜索
+               var userVal= $('.search_txt').val().trim();
+               
+                window.location.href='list.html?userVal='+userVal;
+                $('.search_txt').val('');
+            });
+
+            
+
+
+
             // 页面一加载渲染
             $.ajax({
                 url: 'http://localhost:8080/admin/article/query',
@@ -249,11 +262,13 @@
                 success: function (backData) {
                     if (backData.code == 200) {
                         // 调用模板
-                        var resHtml=template('news',backData);
+                        var resHtml = template('news', backData);
                         $('.focus_list').html(resHtml);
                     }
                 }
             });
+
+
         });
     </script>
 </body>
